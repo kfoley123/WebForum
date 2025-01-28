@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using WebForum.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<WebForumContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WebForumContext") ?? throw new InvalidOperationException("Connection string 'WebForumContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
