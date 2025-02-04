@@ -1,4 +1,6 @@
-﻿namespace WebForum.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebForum.Models
 {
     public class Discussion
     {
@@ -12,6 +14,10 @@
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
         // Navigation property 
-        public List<Comment>? Comments { get; set; } //nullable
+        public List<Comment> Comments { get; set; } = new List<Comment>(); // Initialized to empty list instead of nullable
+
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
+
     }
 }

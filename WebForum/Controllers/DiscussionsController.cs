@@ -54,16 +54,45 @@ namespace WebForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFileName,CreateDate")] Discussion discussion)
+        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,CreateDate,ImageFileName")] Discussion discussion)
         {
             if (ModelState.IsValid)
             {
+                // If there is an uploaded file, save it
+                if (discussion.ImageFile != null && discussion.ImageFile.Length > 0)
+                {
+                    // Generate a unique filename
+                    var fileName = Path.GetRandomFileName() + Path.GetExtension(discussion.ImageFile.FileName);
+
+                    // Specify the path where the image will be saved (wwwroot/images)
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+                    // Ensure the directory exists
+                    var directoryPath = Path.GetDirectoryName(filePath);
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath); // Create the directory if it doesn't exist
+                    }
+
+                    // Save the file
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await discussion.ImageFile.CopyToAsync(stream);
+                    }
+
+                    // Save the filename in the database
+                    discussion.ImageFileName = fileName;
+                }
+
+                // Add the discussion to the database
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(discussion);
         }
+
 
         // GET: Discussions/Edit/5
         public async Task<IActionResult> Edit(int? id)
