@@ -54,7 +54,7 @@ namespace WebForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,CreateDate,ImageFileName")] Discussion discussion)
+        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,CreateDate,ImageFile")] Discussion discussion)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace WebForum.Controllers
                     var fileName = Path.GetRandomFileName() + Path.GetExtension(discussion.ImageFile.FileName);
 
                     // Specify the path where the image will be saved (wwwroot/images)
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
 
                     // Ensure the directory exists
                     var directoryPath = Path.GetDirectoryName(filePath);
