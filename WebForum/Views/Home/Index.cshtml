@@ -3,13 +3,14 @@
 <h1 class="mb-4">Discussion Threads</h1>
 
 <div class="container">
-    <a class="btn btn-primary mb-3" asp-action="Create">Create New</a>
+    <a class="btn btn-primary mb-3" asp-controller="Discussions" asp-action="Create">Create New</a>
+
 
     <div class="list-group">
         @foreach (var discussion in Model)
         {
             <div class="list-group-item list-group-item-action d-flex align-items-start p-3">
-                <!-- Thumbnail or Initial -->
+                <!-- Thumbnail -->
                 <div class="flex-shrink-0">
                     @if (!string.IsNullOrEmpty(discussion.ImageFileName))
                     {
@@ -31,7 +32,7 @@
                                 @discussion.Title
                             </a>
                         </h5>
-                        <small class="text-muted">@discussion.CreateDate.ToString("yyyy-MM-dd HH:mm:ss")</small>
+                        <small class="text-muted">@discussion.CreateDate.ToString("MMM dd HH:mm")</small>
                     </div>
                     <p class="mb-1 text-muted">
                         <i class="bi bi-chat"></i> @discussion.Comments.Count
