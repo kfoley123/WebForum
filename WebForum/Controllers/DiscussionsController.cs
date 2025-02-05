@@ -34,6 +34,7 @@ namespace WebForum.Controllers
             }
 
             var discussion = await _context.Discussion
+                .Include(p => p.Comments)
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
             if (discussion == null)
             {

@@ -19,7 +19,7 @@
                 @Html.DisplayNameFor(model => model.Content)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageFileName)
+                Image
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreateDate)
@@ -28,26 +28,33 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DiscussionId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DiscussionId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DiscussionId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Content)
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImageFileName))
+                    {
+                        <img src="~/images/@item.ImageFileName" alt="Discussion Image" style="max-width: 100px; height: auto;" />
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.DiscussionId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.DiscussionId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.DiscussionId">Delete</a>
+                </td>
+                <td><p>comments: @ViewBag.CommentCount</p></td>
+            </tr>
+
+        }
     </tbody>
+
 </table>

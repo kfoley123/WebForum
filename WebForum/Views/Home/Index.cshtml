@@ -1,8 +1,46 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model List<Discussion>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1 class="mb-4">Discussion Threads</h1>
+
+<div class="container">
+    <a class="btn btn-primary mb-3" asp-action="Create">Create New</a>
+
+    <div class="list-group">
+        @foreach (var discussion in Model)
+        {
+            <div class="list-group-item list-group-item-action d-flex align-items-start p-3">
+                <!-- Thumbnail or Initial -->
+                <div class="flex-shrink-0">
+                    @if (!string.IsNullOrEmpty(discussion.ImageFileName))
+                    {
+                        <img src="~/images/@discussion.ImageFileName" alt="Thumbnail" class="rounded img-thumbnail" style="width: 80px; height: 60px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; font-size: 20px;">
+                            @discussion.Title.Substring(0, 1).ToUpper()
+                        </div>
+                    }
+                </div>
+
+                <!-- Discussion Content -->
+                <div class="ms-3 w-100">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="mb-1">
+                            <a href="@Url.Action("GetDiscussion", "Home", new { id = discussion.DiscussionId })" class="text-primary text-decoration-none">
+                                @discussion.Title
+                            </a>
+                        </h5>
+                        <small class="text-muted">@discussion.CreateDate.ToString("yyyy-MM-dd HH:mm:ss")</small>
+                    </div>
+                    <p class="mb-1 text-muted">
+                        <i class="bi bi-chat"></i> @discussion.Comments.Count
+                    </p>
+
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
+
