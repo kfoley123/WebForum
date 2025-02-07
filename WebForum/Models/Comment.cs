@@ -10,7 +10,8 @@ namespace WebForum.Models
         
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
-        //foreign key
+        //foreign key 
+        //test
         public int DiscussionId {  get; set; }
 
         // Navigation property
