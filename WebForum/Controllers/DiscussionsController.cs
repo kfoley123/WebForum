@@ -63,6 +63,7 @@ namespace WebForum.Controllers
         {
             if (ModelState.IsValid)
             {
+                discussion.CreateDate = DateTime.UtcNow;
                 // If there is an uploaded file, save it
                 if (discussion.ImageFile != null && discussion.ImageFile.Length > 0)
                 {

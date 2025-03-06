@@ -20,11 +20,14 @@ namespace WebForum.Controllers
         }
 
         // GET: Comments/Create
-        public IActionResult Create()
+   
+
+        public IActionResult Create(int discussionId)
         {
-            ViewData["DiscussionId"] = new SelectList(_context.Discussion, "DiscussionId", "Title");
-            return View();
+            var comment = new Comment { DiscussionId = discussionId };
+            return View(comment);
         }
+
 
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -35,6 +38,8 @@ namespace WebForum.Controllers
         {
             if (ModelState.IsValid)
             {
+                comment.CreateDate = DateTime.UtcNow;
+
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Details", "Discussions", new { id = comment.DiscussionId });
