@@ -4,12 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebForum.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 namespace WebForum.Data
 {
-    public class WebForumContext : DbContext
+    public class WebForumContext : IdentityDbContext
     {
-        public WebForumContext (DbContextOptions<WebForumContext> options)
+        public WebForumContext(DbContextOptions<WebForumContext> options)
             : base(options)
         {
         }
