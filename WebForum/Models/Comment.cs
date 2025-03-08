@@ -1,5 +1,7 @@
 ﻿
 
+using WebForum.Data;
+
 namespace WebForum.Models
 {
     public class Comment
@@ -16,5 +18,12 @@ namespace WebForum.Models
 
         // Navigation property
         public Discussion? Discussion { get; set; } //nullable
+
+        // Foreign key (AspNetUsers table)
+        //because I already have comments that I want to keep, I need to make this nullable
+        public string? ApplicationUserId { get; set; }
+
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
     }
 }

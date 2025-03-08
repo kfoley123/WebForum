@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using WebForum.Data;
 
 namespace WebForum.Models
 {
@@ -18,6 +19,13 @@ namespace WebForum.Models
 
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
+
+        // Foreign key (AspNetUsers table)
+        //becasue I already have discussions that I want to keep, I need to make this nullable
+        public string? ApplicationUserId { get; set; } = string.Empty;
+
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
 
     }
 }
