@@ -7,27 +7,38 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebForum.Data;
 using WebForum.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebForum.Controllers
 {
+    [Authorize]
     public class DiscussionsController : Controller
     {
         private readonly WebForumContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DiscussionsController(WebForumContext context)
+        public DiscussionsController(WebForumContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
+            var userId = _userManager.GetUserId(User);
             var discussions = await _context.Discussion
+                                             .Where(d => d.ApplicationUserId == userId) //filter by userid
                                              .Include(d => d.Comments)
                                              .OrderByDescending(d => d.CreateDate) 
                                              .ToListAsync();
             return View(discussions);
         }
 
+        private bool DiscussionExists(int id)
+        {
+            return _context.Discussion.Any(e => e.DiscussionId == id);
+        }
 
         // GET: Discussions/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -63,6 +74,9 @@ namespace WebForum.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Set the user ID of the person logged in
+                discussion.ApplicationUserId = _userManager.GetUserId(User);
+
                 discussion.CreateDate = DateTime.UtcNow;
                 // If there is an uploaded file, save it
                 if (discussion.ImageFile != null && discussion.ImageFile.Length > 0)
@@ -113,12 +127,18 @@ namespace WebForum.Controllers
             {
                 return NotFound();
             }
+
+            // Ensure that the current user is the owner of the discussion.
+            var currentUserId = _userManager.GetUserId(User);
+            if (discussion.ApplicationUserId != currentUserId)
+            {
+                return Forbid(); // Alternatively, redirect to an "Access Denied" page.
+            }
+
             return View(discussion);
         }
 
         // POST: Discussions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFileName,CreateDate")] Discussion discussion)
@@ -128,11 +148,29 @@ namespace WebForum.Controllers
                 return NotFound();
             }
 
+            // Retrieve the existing discussion from the database.
+            var existingDiscussion = await _context.Discussion.FindAsync(id);
+            if (existingDiscussion == null)
+            {
+                return NotFound();
+            }
+
+            // Verify that the logged-in user is the owner.
+            var currentUserId = _userManager.GetUserId(User);
+            if (existingDiscussion.ApplicationUserId != currentUserId)
+            {
+                return Forbid();
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(discussion);
+                    // Update only the allowed fields
+                    existingDiscussion.Title = discussion.Title;
+                    existingDiscussion.Content = discussion.Content;
+                    existingDiscussion.ImageFileName = discussion.ImageFileName; 
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -151,6 +189,8 @@ namespace WebForum.Controllers
             return View(discussion);
         }
 
+
+
         // GET: Discussions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -166,27 +206,37 @@ namespace WebForum.Controllers
                 return NotFound();
             }
 
+            // Check if the user is the owner
+            var currentUserId = _userManager.GetUserId(User);
+            if (discussion.ApplicationUserId != currentUserId)
+            {
+                return Forbid();
+            }
+
             return View(discussion);
         }
 
         // POST: Discussions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion != null)
-            {
-                _context.Discussion.Remove(discussion);
-            }
+       public async Task<IActionResult> DeleteConfirmed(int id)
+{
+    var discussion = await _context.Discussion.FindAsync(id);
+    if (discussion == null)
+    {
+        return NotFound();
+    }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+    // Check owner before deletion
+    var currentUserId = _userManager.GetUserId(User);
+    if (discussion.ApplicationUserId != currentUserId)
+    {
+        return Forbid();
+    }
 
-        private bool DiscussionExists(int id)
-        {
-            return _context.Discussion.Any(e => e.DiscussionId == id);
-        }
+    _context.Discussion.Remove(discussion);
+    await _context.SaveChangesAsync();
+    return RedirectToAction(nameof(Index));
+}
     }
 }

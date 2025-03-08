@@ -15,6 +15,16 @@ namespace WebForum.Controllers
             _context = context;
         }
 
+        //public async Task<IActionResult> Index()
+        //{
+        //    var discussions = await _context.Discussion
+        //        .OrderByDescending(d => d.CreateDate)
+        //        .Include(d => d.Comments)
+        //        .ToListAsync();
+
+        //    return View(discussions);
+        //}
+
         public async Task<IActionResult> Index()
         {
             var discussions = await _context.Discussion
@@ -22,8 +32,14 @@ namespace WebForum.Controllers
                 .Include(d => d.Comments)
                 .ToListAsync();
 
+            if (discussions.Count == 0)
+            {
+                ViewBag.Message = "No discussions available.";
+            }
+
             return View(discussions);
         }
+
 
         public async Task<IActionResult> GetDiscussion(int id)
         {
