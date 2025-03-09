@@ -26,9 +26,6 @@ namespace WebForum.Controllers
         }
 
         // GET: Comments/Create
-
-      
-
         public IActionResult Create(int discussionId)
         {
             var userId = _userManager.GetUserId(User);

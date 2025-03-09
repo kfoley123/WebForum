@@ -32,10 +32,18 @@
                                 @discussion.Title
                             </a>
                         </h5>
-                        <small class="text-muted">@discussion.CreateDate.ToString("MMM dd HH:mm")</small>
+                        <div class="d-flex flex-column">
+                            <small class="text-muted">@discussion.CreateDate.ToString("MMM dd HH:mm")</small>
+                            <small> Created by:
+                                <a href="@Url.Action("Profile", "Home", new { id = discussion.ApplicationUserId })" class="text-decoration-none">
+                                    @discussion.ApplicationUser?.Name
+                                </a>
+                            </small>
+                        </div>
+                        
                     </div>
                     <p class="mb-1 text-muted">
-                        <i class="bi bi-chat"></i> @discussion.Comments.Count
+                        @* <i class="bi bi-chat"></i> @discussion.Comments.Count *@
                     </p>
 
                 </div>

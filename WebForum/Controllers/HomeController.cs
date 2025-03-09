@@ -25,6 +25,7 @@ namespace WebForum.Controllers
             var discussions = await _context.Discussion
                 .OrderByDescending(d => d.CreateDate)
                 .Include(d => d.Comments)
+                .Include(d => d.ApplicationUser)
                 .ToListAsync();
 
             if (discussions.Count == 0)

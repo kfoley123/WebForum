@@ -5,7 +5,6 @@ namespace WebForum.Models
 {
     public class Discussion
     {
-
         public int DiscussionId { get; set; } 
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
@@ -21,11 +20,12 @@ namespace WebForum.Models
         public IFormFile? ImageFile { get; set; }
 
         // Foreign key (AspNetUsers table)
-        //becasue I already have discussions that I want to keep, I need to make this nullable
-        public string? ApplicationUserId { get; set; } = string.Empty;
+        
+        public string? ApplicationUserId { get; set; }
 
         // Navigation property
-        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
+        public ApplicationUser? ApplicationUser { get; set; } 
+
 
     }
 }

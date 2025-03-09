@@ -9,6 +9,7 @@ using WebForum.Data;
 using WebForum.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Azure.Identity;
 
 namespace WebForum.Controllers
 {
@@ -28,7 +29,7 @@ namespace WebForum.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var discussions = await _context.Discussion
-                                             .Where(d => d.ApplicationUserId == userId) //filter by userid
+                                             .Include(d => d.ApplicationUser)
                                              .Include(d => d.Comments)
                                              .OrderByDescending(d => d.CreateDate) 
                                              .ToListAsync();
@@ -49,7 +50,8 @@ namespace WebForum.Controllers
             }
 
             var discussion = await _context.Discussion
-                .Include(p => p.Comments)
+                .Include(d => d.Comments)
+                .Include(d => d.ApplicationUser)
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
             if (discussion == null)
             {
@@ -70,48 +72,48 @@ namespace WebForum.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,CreateDate,ImageFile")] Discussion discussion)
+        public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFile")] Discussion discussion)
         {
             if (ModelState.IsValid)
             {
-                // Set the user ID of the person logged in
-                discussion.ApplicationUserId = _userManager.GetUserId(User);
-
+                // Get the logged-in user's ID.
+                var userId = _userManager.GetUserId(User);
+                if (userId == null)
+                {
+                    return Unauthorized();
+                }
+                // Associate the discussion with the logged-in user.
+                discussion.ApplicationUserId = userId;
                 discussion.CreateDate = DateTime.UtcNow;
-                // If there is an uploaded file, save it
+
+                // Handle image file upload if one was provided.
                 if (discussion.ImageFile != null && discussion.ImageFile.Length > 0)
                 {
-                    // Generate a unique filename
                     var fileName = Path.GetRandomFileName() + Path.GetExtension(discussion.ImageFile.FileName);
-
-                    // Specify the path where the image will be saved (wwwroot/images)
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
 
-                    // Ensure the directory exists
+                    // Create the directory if it doesn't exist.
                     var directoryPath = Path.GetDirectoryName(filePath);
                     if (!Directory.Exists(directoryPath))
                     {
-                        Directory.CreateDirectory(directoryPath); // Create the directory if it doesn't exist
+                        Directory.CreateDirectory(directoryPath);
                     }
 
-                    // Save the file
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await discussion.ImageFile.CopyToAsync(stream);
                     }
 
-                    // Save the filename in the database
                     discussion.ImageFileName = fileName;
                 }
 
-                // Add the discussion to the database
                 _context.Add(discussion);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
             return View(discussion);
         }
+
 
 
         // GET: Discussions/Edit/5

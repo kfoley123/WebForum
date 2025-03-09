@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity;
+using WebForum.Models;
 
 namespace WebForum.Data
 {
@@ -19,5 +20,7 @@ namespace WebForum.Data
 
         [PersonalData]
         public string ProfileImage { get; set; } = string.Empty;
+
+        public List<Discussion> Discussions { get; set; } = new List<Discussion>();
     }
 }
