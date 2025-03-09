@@ -29,6 +29,7 @@ namespace WebForum.Controllers
         {
             var userId = _userManager.GetUserId(User);
             var discussions = await _context.Discussion
+                                             .Where(d => d.ApplicationUserId == userId)
                                              .Include(d => d.ApplicationUser)
                                              .Include(d => d.Comments)
                                              .OrderByDescending(d => d.CreateDate) 
