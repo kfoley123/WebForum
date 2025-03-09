@@ -18,6 +18,6 @@ namespace WebForum.Data
         public bool IsForHire { get; set; } = false;
 
         [PersonalData]
-        public string ImageFilename { get; set; } = string.Empty;
+        public string ProfileImage { get; set; } = string.Empty;
     }
 }

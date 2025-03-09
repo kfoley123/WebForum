@@ -1,0 +1,24 @@
+﻿@model UserProfileViewModel
+
+<div class="container mt-4">
+    <div class="card p-3">
+        <div class="d-flex align-items-center">
+            <img src="@Model.ProfilePicture" alt="Profile Picture" class="rounded-circle" width="100" height="100">
+            <div class="ms-3">
+                <h3>@Model.Name</h3>
+                <p><strong>Location:</strong> @Model.Location</p>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mt-4">Discussions</h4>
+    <div class="list-group">
+        @foreach (var discussion in Model.Discussions)
+        {
+            <a href="@Url.Action("GetDiscussion", "Home", new { id = discussion.DiscussionId })" class="list-group-item list-group-item-action">
+                <h5>@discussion.Title</h5>
+                <small>Created on @discussion.CreateDate.ToShortDateString()</small>
+            </a>
+        }
+    </div>
+</div>

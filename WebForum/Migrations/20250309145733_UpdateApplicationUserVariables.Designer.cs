@@ -12,8 +12,8 @@ using WebForum.Data;
 namespace WebForum.Migrations
 {
     [DbContext(typeof(WebForumContext))]
-    [Migration("20250308220018_ClearDiscussions")]
-    partial class ClearDiscussions
+    [Migration("20250309145733_UpdateApplicationUserVariables")]
+    partial class UpdateApplicationUserVariables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -185,10 +185,6 @@ namespace WebForum.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ImageFilename")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsForHire")
                         .HasColumnType("bit");
 
@@ -222,6 +218,10 @@ namespace WebForum.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfileImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");

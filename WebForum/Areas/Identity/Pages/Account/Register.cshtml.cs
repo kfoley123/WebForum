@@ -159,7 +159,7 @@ namespace WebForum.Areas.Identity.Pages.Account
                         await Input.ImageFile.CopyToAsync(fileStream);
                     }
 
-                    user.ImageFilename = imageFilename;
+                    user.ProfileImage = imageFilename;
                 }
                 /////////////////////////////////////////
                 /// END: ApplicationUser custom fields

@@ -102,7 +102,7 @@ namespace WebForum.Areas.Identity.Pages.Account.Manage
                 Bio = user.Bio,
                 Location = user.Location,
                 IsForHire = user.IsForHire,
-                ImageFilename = user.ImageFilename,
+                ImageFilename = user.ProfileImage,
                 /////////////////////////////////////////
                 /// END: ApplicationUser custom fields
                 /////////////////////////////////////////
@@ -183,7 +183,7 @@ namespace WebForum.Areas.Identity.Pages.Account.Manage
                     await Input.ImageFile.CopyToAsync(fileStream);
                 }
 
-                user.ImageFilename = imageFilename; // change the filename 
+                user.ProfileImage = imageFilename; // change the filename 
             }
 
             await _userManager.UpdateAsync(user);
