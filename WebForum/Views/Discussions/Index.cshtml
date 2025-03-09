@@ -13,15 +13,15 @@
 
     <!-- Discussions List -->
     <div class="list-group">
-        @foreach (var item in Model)
+        @foreach (var discussion in Model)
         {
             <div class="list-group-item list-group-item-action d-flex align-items-start p-3">
                 <div class="flex-shrink-0">
-                     <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@item.DiscussionId" class="list-group-item list-group-item-action d-flex align-items-center mb-3">
+                     <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@discussion.DiscussionId" class="list-group-item list-group-item-action d-flex align-items-center mb-3">
                     <!-- Thumbnail -->
-                    @if (!string.IsNullOrEmpty(item.ImageFileName))
+                    @if (!string.IsNullOrEmpty(discussion.ImageFileName))
                     {
-                        <img src="~/images/@item.ImageFileName" alt="Discussion Image" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                        <img src="~/images/@discussion.ImageFileName" alt="Discussion Image" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
                     }
                     </a>
                 </div>
@@ -31,28 +31,34 @@
 
                         <div class="flex-column">
                             <!-- Title -->
-                            <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@item.DiscussionId" >
-                                <h5 class="mb-1 text-primary">@item.Title</h5>
+                            <a asp-controller="Home" asp-action="GetDiscussion" asp-route-id="@discussion.DiscussionId" >
+                                <h5 class="mb-1 text-primary">@discussion.Title</h5>
                             </a>
 
                             <!-- Content Preview -->
-                            <p class="text-muted text-truncate mb-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 200px;">@item.Content</p>
+                            <p class="text-muted text-truncate mb-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 200px;">@discussion.Content</p>
 
                             <!-- Metadata -->
-                            <small class="text-muted">@item.CreateDate.ToString("MMM dd HH:mm")</small>
+                            <small class="text-muted">@discussion.CreateDate.ToString("MMM dd HH:mm")</small>
                         </div>
 
                         <div class="flex-column">
 
                             <!-- Edit, Details, Delete Links -->
                             <div>
-                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@item.DiscussionId">Edit</a> |
-                            <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@item.DiscussionId">Details</a> |
-                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.DiscussionId">Delete</a>
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@discussion.DiscussionId">Edit</a> |
+                            <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@discussion.DiscussionId">Details</a> |
+                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@discussion.DiscussionId">Delete</a>
                             </div>
                             <!-- Comments Count with Icon -->
 
-                            <i class="bi bi-chat"></i> @item.Comments.Count
+                            <i class="bi bi-chat"></i> @discussion.Comments.Count
+
+                            <small>
+                                Created by:  <a href="@Url.Action("Profile", "Home", new { id = discussion.ApplicationUserId })" class="text-decoration-none">
+                                    @discussion.ApplicationUser?.Name
+                                </a>
+                            </small>
                         </div>
                     </div>
                 </div>
